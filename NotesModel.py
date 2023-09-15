@@ -17,17 +17,23 @@ class NotesModel:
 
     def export_notes(self, file_name: str):
         full_name = join(MAIN_DIR, "data", file_name + '.csv')
+        try:
+            with open(full_name, mode="w", encoding="UTF-8") as file:
+                for idx, value in self.notes.items():
+                    file.write(f'{idx};{value[0]};{value[1]};{value[2]}\n')
+        except FileNotFoundError:
+            print('Файл или директория не существует.')
 
-        with open(full_name, mode="w", encoding="UTF-8") as file:
-            for idx, value in self.notes.items():
-                file.write(f'{idx};{value[0]};{value[1]};{value[2]}\n')
 
     def import_notes(self, file_name: str) -> dict:
         full_name = join(MAIN_DIR, "data", file_name + '.csv')
-        with open(full_name, mode='r', encoding='UTF-8') as file:
-            for line in file:
-                note_list = line.strip().split(';')
-                self.notes.update(self.create(note_list[1:]))
+        try:
+            with open(full_name, mode='r', encoding='UTF-8') as file:
+                for line in file:
+                    note_list = line.strip().split(';')
+                    self.notes.update(self.create(note_list[1:]))
+        except FileNotFoundError:
+            print('Файл или директория не существует.')
         return self.notes
 
     def find(self, search: str):
